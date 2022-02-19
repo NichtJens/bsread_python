@@ -22,4 +22,18 @@ def _collect(func, args):
     return res
 
 
+def split_channels_by_backend(channels, base_urls):
+    channels = set(channels)
+    res = {}
+    for bu in base_urls:
+        current = _dispatcher.get_current_channel_names(base_url=bu)
+        current = channels.intersection(current)
+        if not current:
+            continue
+
+        res[bu] = current
+
+    return res
+
+
 
