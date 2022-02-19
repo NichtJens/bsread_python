@@ -6,6 +6,15 @@ import zmq
 import numpy
 
 
+def receive_many(sources, **kwargs):
+    receivers = []
+    for src in sources.values():
+        rec = receive(source=src, **kwargs)
+        receivers.append(rec)
+    for _ in zip(*receivers):
+        pass
+
+
 def receive(source=None, clear=False, queue_size=100, mode=zmq.PULL, channel_filter=None):
     numpy.set_printoptions(threshold=5)
     numpy.set_printoptions(linewidth=100)
@@ -105,12 +114,7 @@ def receive_(channels, source, mode, clear, queue_size, base_url, backend):
         sources = dispatchers.request_streams(channels, base_urls=base_urls)
 
     try:
-        receivers = []
-        for source in sources.values():
-            rec = receive(source=source, clear=clear, queue_size=queue_size, mode=mode, channel_filter=channel_filter)
-            receivers.append(rec)
-        for _ in zip(*receivers):
-            pass
+        receive_many(sources, clear=clear, queue_size=queue_size, mode=mode, channel_filter=channel_filter)
 
     except KeyboardInterrupt:
         # KeyboardInterrupt is thrown if the receiving is terminated via ctrl+c
