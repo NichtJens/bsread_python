@@ -1,6 +1,12 @@
 import bsread.dispatcher as _dispatcher
 
 
+def get_current_channel_names(base_urls):
+    res = _collect(_dispatcher.get_current_channel_names, base_urls)
+    res.sort()
+    return res
+
+
 def get_current_channels(base_urls):
     res = _collect(_dispatcher.get_current_channels, base_urls)
     res.sort(key=lambda ch: ch["name"])
