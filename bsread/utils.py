@@ -32,12 +32,13 @@ def check_and_update_uri(uri, default_port=9999, exception=ValueError):
     return address
 
 
+import bsread.dispatcher as dispatcher
+
 def split_channels_by_backend(channels, base_urls):
     channels = set(channels)
     res = {}
     for bu in base_urls:
-        these_chans = dispatcher.get_current_channels(base_url=bu)
-        these_chan_names = (ch["name"] for ch in these_chans)
+        these_chan_names = dispatcher.get_current_channel_names(base_url=bu)
         these_chan_names = channels.intersection(these_chan_names)
         if not these_chan_names:
             continue
