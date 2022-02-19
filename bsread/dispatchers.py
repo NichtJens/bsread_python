@@ -26,10 +26,10 @@ def request_streams(channels, base_urls=DEFAULT_DISPATCHER_URLS):
     chans_map = _split_channels_by_backend(channels, base_urls)
     res = {}
     for bu, chans in chans_map.items():
-        print(bu, chans)
+#        print(bu, chans) #TODO: add logging
         src = _dispatcher.request_stream(chans, base_url=bu)
         res[bu] = src
-    print("streams:", res)
+#    print("streams:", res) #TODO: add logging
     return res
 
 
