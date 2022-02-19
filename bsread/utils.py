@@ -1,5 +1,4 @@
 import re
-import click
 
 
 def get_base_urls(base_url=None, backend=None):
