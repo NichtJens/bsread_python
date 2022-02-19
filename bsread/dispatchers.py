@@ -22,7 +22,18 @@ def _collect(func, args):
     return res
 
 
-def split_channels_by_backend(channels, base_urls):
+def request_streams(channels, base_urls=DEFAULT_DISPATCHER_URLS):
+    chans_map = _split_channels_by_backend(channels, base_urls)
+    res = {}
+    for bu, chans in chans_map.items():
+        print(bu, chans)
+        src = _dispatcher.request_stream(chans, base_url=bu)
+        res[bu] = src
+    print("streams:", res)
+    return res
+
+
+def _split_channels_by_backend(channels, base_urls):
     channels = set(channels)
     res = {}
     for bu in base_urls:
@@ -34,6 +45,11 @@ def split_channels_by_backend(channels, base_urls):
         res[bu] = current
 
     return res
+
+
+def remove_streams(sources):
+    for bu, src in sources.items():
+        _dispatcher.remove_stream(src, base_url=bu)
 
 
 
