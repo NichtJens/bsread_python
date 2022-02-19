@@ -69,6 +69,20 @@ def get_current_channels(base_url=DEFAULT_DISPATCHER_URL):
     return channel_list
 
 
+def split_channels_by_backend(channels, base_urls):
+    channels = set(channels)
+    res = {}
+    for bu in base_urls:
+        these_chan_names = get_current_channel_names(base_url=bu)
+        these_chan_names = channels.intersection(these_chan_names)
+        if not these_chan_names:
+            continue
+
+        res[bu] = these_chan_names
+
+    return res
+
+
 def remove_input_sources(addresses, base_url=DEFAULT_DISPATCHER_URL):
     # Remove input source from dispatching layer
 

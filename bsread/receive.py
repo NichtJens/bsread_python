@@ -102,7 +102,7 @@ def receive_(channels, source, mode, clear, queue_size, base_url, backend):
     else:
         # Connect via the dispatching layer
         use_dispatching = True
-        chans_map = utils.split_channels_by_backend(channels, base_urls)
+        chans_map = dispatcher.split_channels_by_backend(channels, base_urls)
         sources = []
         for base_url, channels in chans_map.items():
             print(base_url, channels)
