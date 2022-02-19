@@ -1,7 +1,7 @@
 import click
 import mflow
 from bsread.handlers.compact import Handler
-from bsread import dispatcher, dispatchers, utils
+from bsread import dispatchers, utils
 import zmq
 import numpy
 
