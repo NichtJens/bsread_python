@@ -10,12 +10,16 @@ import re
 @click.option("--backend", default=None, help="Backend to query")
 def avail(pattern=None, base_url=None, backend=None, metadata=False):
 
-    base_url = utils.get_base_url(base_url, backend)
+    base_urls = utils.get_base_urls(base_url, backend)
 
     pattern = ".*" + pattern + ".*"
 
     try:
-        channels = dispatcher.get_current_channels(base_url=base_url)
+        channels = []
+        for base_url in base_urls:
+            chans = dispatcher.get_current_channels(base_url=base_url)
+            channels.extend(chans)
+        channels.sort(key=lambda x: x["name"])
         for channel in channels:
             if re.match(pattern, channel["name"]):
                 if metadata:
