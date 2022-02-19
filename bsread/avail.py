@@ -1,5 +1,5 @@
 import click
-from bsread import dispatcher, utils
+from bsread import dispatchers, utils
 import re
 
 
@@ -15,11 +15,7 @@ def avail(pattern=None, base_url=None, backend=None, metadata=False):
     pattern = ".*" + pattern + ".*"
 
     try:
-        channels = []
-        for base_url in base_urls:
-            chans = dispatcher.get_current_channels(base_url=base_url)
-            channels.extend(chans)
-        channels.sort(key=lambda x: x["name"])
+        channels = dispatchers.get_current_channels(base_urls)
         for channel in channels:
             if re.match(pattern, channel["name"]):
                 if metadata:
