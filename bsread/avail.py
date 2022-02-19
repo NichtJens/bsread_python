@@ -15,7 +15,7 @@ def avail(pattern=None, base_url=None, backend=None, metadata=False):
     pattern = ".*" + pattern + ".*"
 
     try:
-        channels = dispatchers.get_current_channels(base_urls)
+        channels = dispatchers.get_current_channels(base_urls=base_urls)
         for channel in channels:
             if re.match(pattern, channel["name"]):
                 if metadata:
