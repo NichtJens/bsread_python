@@ -73,12 +73,12 @@ def split_channels_by_backend(channels, base_urls):
     channels = set(channels)
     res = {}
     for bu in base_urls:
-        these_chan_names = get_current_channel_names(base_url=bu)
-        these_chan_names = channels.intersection(these_chan_names)
-        if not these_chan_names:
+        current = get_current_channel_names(base_url=bu)
+        current = channels.intersection(current)
+        if not current:
             continue
 
-        res[bu] = these_chan_names
+        res[bu] = current
 
     return res
 
