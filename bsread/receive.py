@@ -70,6 +70,7 @@ def receive(source=None, clear=False, queue_size=100, mode=zmq.PULL, channel_fil
         #         values = str(value.value)
 
         print(values)
+        yield # use old-school coroutine approach to run several receives that take turns
 
 
 @click.command()
@@ -84,7 +85,7 @@ def receive(source=None, clear=False, queue_size=100, mode=zmq.PULL, channel_fil
 @click.option("--backend", default=None, help="Backend to query")
 def receive_(channels, source, mode, clear, queue_size, base_url, backend):
 
-    base_url = utils.get_base_url(base_url, backend)
+    base_urls = utils.get_base_urls(base_url, backend)
 
     mode = mflow.SUB if mode == 'sub' else mflow.PULL
     use_dispatching = False
@@ -95,15 +96,27 @@ def receive_(channels, source, mode, clear, queue_size, base_url, backend):
 
     if source:
         source = utils.check_and_update_uri(source, exception=click.BadArgumentUsage)
+        sources = [source]
         if channels:
             channel_filter = channels
     else:
         # Connect via the dispatching layer
         use_dispatching = True
-        source = dispatcher.request_stream(channels, base_url=base_url)
+        chans_map = utils.split_channels_by_backend(channels, base_urls)
+        sources = []
+        for base_url, channels in chans_map.items():
+            print(base_url, channels)
+            source = dispatcher.request_stream(channels, base_url=base_url)
+            sources.append(source)
+        print("x", sources)
 
     try:
-        receive(source=source, clear=clear, queue_size=queue_size, mode=mode, channel_filter=channel_filter)
+        receivers = []
+        for source in sources:
+            rec = receive(source=source, clear=clear, queue_size=queue_size, mode=mode, channel_filter=channel_filter)
+            receivers.append(rec)
+        for _ in zip(*receivers):
+            pass
 
     except KeyboardInterrupt:
         # KeyboardInterrupt is thrown if the receiving is terminated via ctrl+c
@@ -112,7 +125,8 @@ def receive_(channels, source, mode, clear, queue_size, base_url, backend):
     finally:
         if use_dispatching:
             print('Closing stream')
-            dispatcher.remove_stream(source, base_url=base_url)
+            for source in sources:
+                dispatcher.remove_stream(source, base_url=base_url)
 
 
 def main():
