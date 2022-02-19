@@ -102,13 +102,7 @@ def receive_(channels, source, mode, clear, queue_size, base_url, backend):
     else:
         # Connect via the dispatching layer
         use_dispatching = True
-        chans_map = dispatchers.split_channels_by_backend(channels, base_urls)
-        sources = {}
-        for base_url, channels in chans_map.items():
-            print(base_url, channels)
-            source = dispatcher.request_stream(channels, base_url=base_url)
-            sources[base_url] = source
-        print("x", sources)
+        sources = dispatchers.request_streams(channels, base_urls=base_urls)
 
     try:
         receivers = []
@@ -125,8 +119,7 @@ def receive_(channels, source, mode, clear, queue_size, base_url, backend):
     finally:
         if use_dispatching:
             print('Closing stream')
-            for base_url, source in sources.items():
-                dispatcher.remove_stream(source, base_url=base_url)
+            dispatchers.remove_streams(sources)
 
 
 def main():
