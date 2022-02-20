@@ -52,4 +52,13 @@ def remove_streams(sources):
         _dispatcher.remove_stream(src, base_url=bu)
 
 
+def assign_backend_to_source(source, base_urls):
+    for bu in base_urls:
+        streams = _dispatcher.request_streams(base_url=bu)
+        streams = [src["stream"] for src in streams]
+        if source in streams:
+#            print("assigned", bu) #TODO: add logging
+            return bu
+
+
 
