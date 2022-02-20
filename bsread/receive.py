@@ -25,9 +25,9 @@ def receive(source=None, clear=False, queue_size=100, mode=zmq.PULL, channel_fil
     handler = Handler()
 
     while True:
+        yield # use old-school coroutine approach to run several receives that take turns
         message = receiver.receive(handler=handler.receive)
         if message is None: # ran into timeout ...
-            yield           # use old-school coroutine approach to run several receives that take turns
             continue        # ... try another receive
 
         message = message.data  # As the rest of the code is only interested in the message data, not statistics
@@ -83,7 +83,6 @@ def receive(source=None, clear=False, queue_size=100, mode=zmq.PULL, channel_fil
         #         values = str(value.value)
 
         print(values)
-        yield # use old-school coroutine approach to run several receives that take turns
 
 
 @click.command()
