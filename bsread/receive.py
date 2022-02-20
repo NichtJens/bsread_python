@@ -105,7 +105,7 @@ def receive_(channels, source, mode, clear, queue_size, base_url, backend):
 
     if source:
         source = utils.check_and_update_uri(source, exception=click.BadArgumentUsage)
-        sources = [source]
+        sources = {base_urls[0]: source} # use specified base_url or fall back to sf-databuffer
         if channels:
             channel_filter = channels
     else:
