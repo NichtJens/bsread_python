@@ -21,11 +21,15 @@ def receive(source=None, clear=False, queue_size=100, mode=zmq.PULL, channel_fil
 
     print('Trying to connect to %s' % source)
 
-    receiver = mflow.connect(source, conn_type="connect", queue_size=queue_size, mode=mode)
+    receiver = mflow.connect(source, conn_type="connect", queue_size=queue_size, mode=mode, receive_timeout=10)
     handler = Handler()
 
     while True:
         message = receiver.receive(handler=handler.receive)
+        if message is None: # ran into timeout ...
+            yield           # use old-school coroutine approach to run several receives that take turns
+            continue        # ... try another receive
+
         message = message.data  # As the rest of the code is only interested in the message data, not statistics
 
         # if message_data['header']['pulse_id'] % 10 == 0:
